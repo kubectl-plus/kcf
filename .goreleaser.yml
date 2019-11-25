@@ -1,10 +1,10 @@
-project_name: {{ .PluginName }}
+project_name: fleet
 release:
   github:
-    owner: {{ .Owner }}
-    name: {{ .Repo }}
+    owner: mhausenblas
+    name: kcf
 builds:
-  - id: {{ .PluginName }}
+  - id: fleet
     goos:
     - linux
     - windows
@@ -17,12 +17,12 @@ builds:
       - GO111MODULE=on
     main: cmd/plugin/main.go
     ldflags: -s -w
-      -X github.com/{{ .Owner }}/{{ .Repo }}/pkg/version.version=
+      -X github.com/mhausenblas/kcf/pkg/version.version=
 archives:
-  - id: {{ .PluginName }}
+  - id: fleet
     builds:
-    - {{ .PluginName }}
-    name_template: {{ `"{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"` }}
+    - fleet
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
     - goos: windows
       format: zip
