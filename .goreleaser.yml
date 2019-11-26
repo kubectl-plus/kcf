@@ -15,7 +15,7 @@ builds:
     env:
       - CGO_ENABLED=0
       - GO111MODULE=on
-    main: cmd/plugin/main.go
+    main: cmd/fleet/main.go
     ldflags: -s -w
       -X github.com/mhausenblas/kcf/pkg/version.version=
 archives:

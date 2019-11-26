@@ -17,4 +17,7 @@ fmt:
 vet:
 	go vet ./pkg/... ./cmd/...
 
+.PHONY: release
+release:
+	curl -sL https://git.io/goreleaser | bash -s -- --rm-dist --config .goreleaser.yml
 
