@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mhausenblas/kcf/pkg/fleet"
 	"github.com/mhausenblas/kcf/pkg/logger"
-	"github.com/mhausenblas/kcf/pkg/plugin"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -58,7 +58,7 @@ func RootCmd() *cobra.Command {
 				finishedCh <- true
 			}()
 
-			if err := plugin.RunPlugin(KubernetesConfigFlags, namespaceName); err != nil {
+			if err := fleet.RunPlugin(KubernetesConfigFlags, namespaceName); err != nil {
 				return errors.Cause(err)
 			}
 

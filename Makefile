@@ -7,7 +7,7 @@ test:
 
 .PHONY: bin
 bin: fmt vet
-	go build -o bin/fleet github.com/mhausenblas/kcf/cmd/plugin
+	go build -o bin/fleet github.com/mhausenblas/kcf/cmd/fleet
 
 .PHONY: fmt
 fmt:
@@ -16,3 +16,5 @@ fmt:
 .PHONY: vet
 vet:
 	go vet ./pkg/... ./cmd/...
+
+
