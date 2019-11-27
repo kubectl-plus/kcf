@@ -1,9 +1,11 @@
 # Usage
 
-The following assumes you have the plugin installed via:
+The following assumes you have the plugin from this repo:
 
 ```sh
-$ kubectl krew install fleet
+$ git clone https://github.com/mhausenblas/kcf.git && cd kcf
+
+$ kubectl krew install --manifest=deploy/krew/fleet.yaml
 ```
 
 ## Cluster fleet overview
