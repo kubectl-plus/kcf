@@ -1,22 +1,18 @@
+# Usage
 
-## Usage
-The following assumes you have the plugin installed via
+The following assumes you have the plugin installed via:
 
-```shell
-kubectl krew install fleet
+```sh
+$ kubectl krew install fleet
 ```
 
-### Scan images in your current kubecontext
+## Cluster fleet overview
 
-```shell
-kubectl fleet
+```sh
+$ kubectl fleet
+NAME                                         CLUSTER                            SERVER
+kind-mh9local                                kind-mh9local                      https://127.0.0.1:56208
+example@something.us-west-2.eksctl.io        something.us-west-2.eksctl.io      https://123456789ABCDEF.gr7.us-west-2.eks.amazonaws.com
 ```
 
-### Scan images in another kubecontext
 
-```shell
-kubectl fleet --context=context-name
-```
-
-## How it works
-Write a brief description of your plugin here.
