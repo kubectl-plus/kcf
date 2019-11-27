@@ -13,8 +13,10 @@ func RunFleetCommand(configFlags *genericclioptions.ConfigFlags) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to read kubeconfig")
 	}
-	for k, v := range config.Clusters {
-		fmt.Printf("%v %v", k, v)
+	for name, cluster := range config.Clusters {
+		fmt.Printf("%v\n", name)
+		fmt.Printf("Server: %v\n", cluster.Server)
+		fmt.Println()
 	}
 	return nil
 }
