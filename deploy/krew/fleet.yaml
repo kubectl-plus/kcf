@@ -9,8 +9,8 @@ spec:
       matchLabels:
         os: linux
         arch: amd64
-    uri: https://github.com/mhausenblas/kcf/releases/download/v0.1.1/fleet_linux_amd64.tar.gz
-    sha256: "d0829b91ec6aa91128408f4c1b6f692413cd8fc29af60313ff32f02c4a5308ee"
+    uri: https://github.com/mhausenblas/kcf/releases/download/v0.1.2/fleet_linux_amd64.tar.gz
+    sha256: "71ffd6f79c413e93f1349c3d8fcd4bbd8ccfb5f8667ac17bbabc1101434ea5ba"
     files:
     - from: "./fleet"
       to: "."
@@ -19,8 +19,8 @@ spec:
       matchLabels:
         os: darwin
         arch: amd64
-    uri: https://github.com/mhausenblas/kcf/releases/download/v0.1.1/fleet_darwin_amd64.tar.gz
-    sha256: "b5a5317d11bb57e02764846d29f703f3cd272164a58f25a5723d9018bcd9bb94"
+    uri: https://github.com/mhausenblas/kcf/releases/download/v0.1.2/fleet_darwin_amd64.tar.gz
+    sha256: "dc4083a7baee9e066e1ebb9acf113c475b62a7ac94c566b724a3b432d3f0f4fc"
     files:
     - from: "./fleet"
       to: "."
@@ -29,8 +29,8 @@ spec:
       matchLabels:
         os: windows
         arch: amd64
-    uri: https://github.com/mhausenblas/kcf/releases/download/v0.1.1/fleet_windows_amd64.zip
-    sha256: "7c2af202113c23bc7895b58e66cd146ae56ed085e4d851118c4ada968b04476e"
+    uri: https://github.com/mhausenblas/kcf/releases/download/v0.1.2/fleet_windows_amd64.zip
+    sha256: "c14aad0b2fbb26b457b7bd62039dbc72b42f7e213a00b020facc2cb7e08c77f0"
     files:
     - from: "/fleet.exe"
       to: "."
