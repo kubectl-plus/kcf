@@ -21,7 +21,7 @@ var (
 func RootCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "fleet",
-		Short:         "",
+		Short:         "Info on a fleet of Kubernetes clusters",
 		Long:          `.`,
 		SilenceErrors: true,
 		SilenceUsage:  true,
@@ -42,9 +42,11 @@ func RootCmd() *cobra.Command {
 	return cmd
 }
 
-// InitAndExecute sets up and executes the root command
+// InitAndExecute sets up and executes fleet commands
 func InitAndExecute() {
-	if err := RootCmd().Execute(); err != nil {
+	rootCmd := RootCmd()
+	rootCmd.AddCommand(DetailsCmd())
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
