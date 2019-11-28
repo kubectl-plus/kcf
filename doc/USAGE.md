@@ -12,9 +12,9 @@ $ kubectl krew install --manifest=deploy/krew/fleet.yaml
 
 ```sh
 $ kubectl fleet
-NAME                                         CLUSTER                            SERVER
-kind-mh9local                                kind-mh9local                      https://127.0.0.1:56208
-example@something.us-west-2.eksctl.io        something.us-west-2.eksctl.io      https://123456789ABCDEF.gr7.us-west-2.eks.amazonaws.com
+CLUSTER                     VERSION            NODES NAMESPACES API
+mngbase.us-west-2.eksctl.io v1.14.8-eks-41be3d 2     5          https://123456789ABCDEF.gr7.us-west-2.eks.amazonaws.com
+kind-mh9local               v1.16.3            1     4          https://127.0.0.1:58836
 ```
 
 
