@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"fmt"
-
+	"github.com/mhausenblas/kcf/pkg/fleet"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +15,9 @@ func DetailsCmd() *cobra.Command {
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Println("DETAILS")
+			if err := fleet.Details(KubernetesConfigFlags, args); err != nil {
+				return errors.Cause(err)
+			}
 			return nil
 		},
 	}

@@ -29,7 +29,7 @@ func RootCmd() *cobra.Command {
 			viper.BindPFlags(cmd.Flags())
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := fleet.RunFleetCommand(KubernetesConfigFlags); err != nil {
+			if err := fleet.Overview(KubernetesConfigFlags); err != nil {
 				return errors.Cause(err)
 			}
 			return nil
