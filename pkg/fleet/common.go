@@ -25,3 +25,13 @@ func csForContext(cfg api.Config, context string) (*kubernetes.Clientset, error)
 	}
 	return cs, nil
 }
+
+// contextOf returns the context name of a given cluster
+func contextOf(cfg api.Config, clusterID string) string {
+	for name, context := range cfg.Contexts {
+		if clusterID == context.Cluster {
+			return name
+		}
+	}
+	return ""
+}

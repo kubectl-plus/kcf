@@ -40,7 +40,6 @@ func Overview(configFlags *genericclioptions.ConfigFlags) error {
 		if cluster != nil {
 			apiServerEndpoint = cluster.Server
 		}
-
 		fmt.Fprintln(w, fmt.Sprintf("%v\t%v\t%v\t%v\t%v", context.Cluster, clusterVersion, noinfo, nsinfo, apiServerEndpoint))
 	}
 	w.Flush()
