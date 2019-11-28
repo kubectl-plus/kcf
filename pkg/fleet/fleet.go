@@ -6,50 +6,66 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/tools/clientcmd/api"
 	"os"
 	"text/tabwriter"
 )
 
 // RunFleetCommand runs the top-level fleet command
 func RunFleetCommand(configFlags *genericclioptions.ConfigFlags) error {
-	config, err := configFlags.ToRawKubeConfigLoader().RawConfig()
+	clientcfg := configFlags.ToRawKubeConfigLoader()
+	cfg, err := clientcfg.RawConfig()
 	if err != nil {
-		return errors.Wrap(err, "Can't read kubeconfig.")
+		return errors.Wrap(err, "Can't assemble raw config")
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
-	fmt.Fprintln(w, "NAME\tCLUSTER\tSERVER")
-	for name, context := range config.Contexts {
-		cluster := config.Clusters[context.Cluster]
-		server := "unknown"
+	fmt.Fprintln(w, "CLUSTER\tNODES\tAPI")
+	for name, context := range cfg.Contexts {
+		cluster := cfg.Clusters[context.Cluster]
+		apiServerEndpoint := "?"
 		if cluster != nil {
-			server = cluster.Server
+			apiServerEndpoint = cluster.Server
 		}
-		fmt.Fprintln(w, fmt.Sprintf("%v\t%v\t%v", name, context.Cluster, server))
+		ninfo, err := nodesOverview(cfg, name)
+		if err != nil {
+			ninfo = "?"
+		}
+		fmt.Fprintln(w, fmt.Sprintf("%v\t%v\t%v", context.Cluster, ninfo, apiServerEndpoint))
 	}
 	w.Flush()
-
-	nodesOverview(configFlags)
 	return nil
 }
 
-func nodesOverview(configFlags *genericclioptions.ConfigFlags) error {
-	config, err := configFlags.ToRESTConfig()
+// nodesOverview provides an overview of the cluster's worker nodes in the context
+func nodesOverview(cfg api.Config, context string) (string, error) {
+	cs, err := csForContext(cfg, context)
 	if err != nil {
-		return errors.Wrap(err, "Can't read kubeconfig")
+		return "", errors.Wrap(err, "Can't create a clientset based on config provided")
+	}
+	nodes, err := cs.CoreV1().Nodes().List(metav1.ListOptions{})
+	if err != nil {
+		return "", errors.Wrap(err, "Can't get nodes in cluster")
+	}
+	noverview := fmt.Sprintf("%v", len(nodes.Items))
+	return noverview, nil
+}
+
+// csForContext returns a client for a given context
+func csForContext(cfg api.Config, context string) (*kubernetes.Clientset, error) {
+	config, err := clientcmd.NewNonInteractiveClientConfig(
+		cfg,
+		context,
+		&clientcmd.ConfigOverrides{
+			CurrentContext: context,
+		},
+		nil).ClientConfig()
+	if err != nil {
+		return nil, errors.Wrap(err, "Can't switch context")
 	}
 	cs, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		return errors.Wrap(err, "Can't create a clientset based on kubeconfig provided.")
+		return nil, errors.Wrap(err, "Can't create a client based on config and/or context provided")
 	}
-
-	nodes, err := cs.CoreV1().Nodes().List(metav1.ListOptions{})
-	if err != nil {
-		return errors.Wrap(err, "Can't list nodes in cluster")
-	}
-
-	for _, node := range nodes.Items {
-		fmt.Println(node.Name)
-	}
-
-	return nil
+	return cs, nil
 }
