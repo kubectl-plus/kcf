@@ -3,7 +3,7 @@ kind: Plugin
 metadata:
   name: fleet
 spec:
-  version: "v0.1.1"
+  version: "v0.1.2"
   platforms:
   - selector:
       matchLabels:
@@ -43,7 +43,7 @@ spec:
 
     For additional options:
       $ kubectl fleet --help
-      or https://github.com/mhausenblas/kcf/blob/v0.1.1/doc/USAGE.md
+      or https://github.com/mhausenblas/kcf/blob/v0.1.2/doc/USAGE.md
 
   description: |
     Allows to get an overview and details on a fleet of Kubernetes clusters.
