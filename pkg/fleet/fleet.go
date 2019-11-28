@@ -21,12 +21,12 @@ func RunFleetCommand(configFlags *genericclioptions.ConfigFlags) error {
 		return errors.Wrap(err, "Can't assemble raw config")
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
-	fmt.Fprintln(w, "CLUSTER\tNODES\tNAMESPACES\tAPI")
+	fmt.Fprintln(w, "CLUSTER\tVERSION\tNODES\tNAMESPACES\tAPI")
 	for name, context := range cfg.Contexts {
 		cluster := cfg.Clusters[context.Cluster]
-		apiServerEndpoint := "?"
-		if cluster != nil {
-			apiServerEndpoint = cluster.Server
+		clusterVersion, err := clusterVersion(cfg, name)
+		if err != nil {
+			clusterVersion = "?"
 		}
 		noinfo, err := nodesOverview(cfg, name)
 		if err != nil {
@@ -36,10 +36,28 @@ func RunFleetCommand(configFlags *genericclioptions.ConfigFlags) error {
 		if err != nil {
 			nsinfo = "?"
 		}
-		fmt.Fprintln(w, fmt.Sprintf("%v\t%v\t%v\t%v", context.Cluster, noinfo, nsinfo, apiServerEndpoint))
+		apiServerEndpoint := "?"
+		if cluster != nil {
+			apiServerEndpoint = cluster.Server
+		}
+
+		fmt.Fprintln(w, fmt.Sprintf("%v\t%v\t%v\t%v\t%v", context.Cluster, clusterVersion, noinfo, nsinfo, apiServerEndpoint))
 	}
 	w.Flush()
 	return nil
+}
+
+// clusterVersion returns the cluster version in given context
+func clusterVersion(cfg api.Config, context string) (string, error) {
+	cs, err := csForContext(cfg, context)
+	if err != nil {
+		return "", errors.Wrap(err, "Can't create a clientset based on config provided")
+	}
+	cversion, err := cs.Discovery().ServerVersion()
+	if err != nil {
+		return "", errors.Wrap(err, "Can't get cluster server version")
+	}
+	return fmt.Sprintf("%s", cversion), nil
 }
 
 // nodesOverview returns the cluster's worker nodes overview in given context
@@ -64,7 +82,7 @@ func nsOverview(cfg api.Config, context string) (string, error) {
 	}
 	ns, err := cs.CoreV1().Namespaces().List(metav1.ListOptions{})
 	if err != nil {
-		return "", errors.Wrap(err, "Can't get nodes in cluster")
+		return "", errors.Wrap(err, "Can't get namespaces in cluster")
 	}
 	nsverview := fmt.Sprintf("%v", len(ns.Items))
 	return nsverview, nil
