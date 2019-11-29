@@ -1,4 +1,4 @@
-# Using `fleet`
+# The `fleet` user manual
 
 ## Installation
 

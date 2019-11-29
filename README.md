@@ -18,7 +18,7 @@ The top-level command lists all active clusters found in the [kubeconfig](https:
 provided. Active clusters are defined as the one that you would see when you'd execute
 the `kubectl config get-contexts` command. For each cluster, configuration info such as
 the control plane version or API server endpoint are displayed, as well as select
-stats, for example the number of worker nodes or namespaces found in the cluster.
+stats, for example, the number of worker nodes or namespaces found in the cluster.
 
 Note that you can also use it standalone, simply download the binary for your platform
 from the [release page](https://github.com/mhausenblas/kcf/releases).
