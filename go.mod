@@ -28,7 +28,7 @@ require (
 	github.com/tj/go-spin v1.1.0
 	golang.org/x/net v0.0.0-20190812203447-cdfb69ac37fc
 	gopkg.in/yaml.v2 v2.2.2
-	k8s.io/api v0.0.0-20190313235455-40a48860b5ab // indirect
+	k8s.io/api v0.0.0-20190313235455-40a48860b5ab
 	k8s.io/apimachinery v0.0.0-20190313205120-d7deff9243b1
 	k8s.io/cli-runtime v0.0.0-20190314001948-2899ed30580f
 	k8s.io/client-go v11.0.0+incompatible
