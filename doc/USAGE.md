@@ -37,7 +37,7 @@ If you're interested in what is running in a specific cluster in your fleet,
 use the `details` sub-command like so:
 
 ```sh
-$ kubectl details kind-mh9local
+$ kubectl fleet details kind-mh9local
 API server endpoint: https://127.0.0.1:51366
 
 # namespace [default]
