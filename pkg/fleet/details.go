@@ -36,7 +36,6 @@ func Details(configFlags *genericclioptions.ConfigFlags, args []string) error {
 // coreResDetails returns details about useful core resources in given context.
 // Useful core resources include pods, services, deployments,
 func coreResDetails(cfg api.Config, context string) (result string, err error) {
-	result = fmt.Sprintf("# Core resources stats by namespace\n\n")
 	cs, err := csForContext(cfg, context)
 	if err != nil {
 		return "", errors.Wrap(err, "Can't create a clientset based on config provided")
@@ -47,7 +46,7 @@ func coreResDetails(cfg api.Config, context string) (result string, err error) {
 	}
 	for _, ns := range namespaces.Items {
 		nsname := ns.Name
-		result += fmt.Sprintf("namespace [%v] has ", nsname)
+		result += fmt.Sprintf("# namespace [%v]\n", nsname)
 		// pod stats in namespace:
 		pods, err := cs.CoreV1().Pods(nsname).List(metav1.ListOptions{})
 		if err != nil {
@@ -55,15 +54,29 @@ func coreResDetails(cfg api.Config, context string) (result string, err error) {
 		}
 		switch len(pods.Items) {
 		case 0:
-			result += fmt.Sprintf("no pods\n")
+			result += fmt.Sprintf("has no pods\n")
 		default:
-			result += fmt.Sprintf("%v pod(s) overall:\n", len(pods.Items))
+			result += fmt.Sprintf("has %v pod(s) overall:\n", len(pods.Items))
 			for _, pod := range pods.Items {
 				result += fmt.Sprintf("- %v", podInfo(pod))
 			}
 		}
+		// service stats in namespace:
+		svcs, err := cs.CoreV1().Services(nsname).List(metav1.ListOptions{})
+		if err != nil {
+			return "", errors.Wrap(err, "Can't get services")
+		}
+		switch len(svcs.Items) {
+		case 0:
+			result += fmt.Sprintf("has no services\n")
+		default:
+			result += fmt.Sprintf("has %v service(s) overall:\n", len(svcs.Items))
+			for _, svc := range svcs.Items {
+				result += fmt.Sprintf("- %v", svcInfo(svc))
+			}
+		}
 		// mark end of namespace stats:
-		result += strings.Repeat("-", 80) + "\n"
+		result += strings.Repeat("-", 80) + "\n\n"
 	}
 	return result, nil
 }
@@ -77,5 +90,18 @@ func podInfo(pod v1.Pod) (result string) {
 		images += fmt.Sprintf("%v ", container.Image)
 	}
 	result += fmt.Sprintf("pod [%v] is %v and uses image(s) %v\n", podname, podstatus, images)
+	return result
+}
+
+// svcInfo renders details of the status and config of a service given
+func svcInfo(svc v1.Service) (result string) {
+	svcname := svc.Name
+	svctype := svc.Spec.Type
+	svcclusterip := svc.Spec.ClusterIP
+	ports := ""
+	for _, port := range svc.Spec.Ports {
+		ports += fmt.Sprintf(" %v %v/%v", port.Name, port.Protocol, port.Port)
+	}
+	result += fmt.Sprintf("service [%v] of type %v uses IP %v and port(s)%v\n", svcname, svctype, svcclusterip, ports)
 	return result
 }
