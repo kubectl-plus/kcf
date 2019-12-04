@@ -3,13 +3,22 @@
 ## Installation
 
 Most typically, you'd want to install `fleet` as a `kubectl` plugin.
-In order to be able to do that, make sure you have [krew installed](https://github.com/kubernetes-sigs/krew/#installation) and then you can install `fleet` from this repo as follows:
+In order to be able to do that, make sure you have [krew installed](https://github.com/kubernetes-sigs/krew/#installation) and then you can install `fleet` as follows:
+
+```sh
+$ kubectl krew install fleet.yaml
+```
+
+Alternatively, for a version that is not yet updated and hence available in the [krew index](https://index.krew.dev/), you can install `fleet` from this repo as follows:
 
 ```sh
 $ git clone https://github.com/mhausenblas/kcf.git && cd kcf
 
 $ kubectl krew install --manifest=deploy/krew/fleet.yaml
 ```
+
+If the installation fails, check if `krew` is available on your local system
+ and also, make sure you're using the most recent index (run `kubectl krew update`) to ensure this.
 
 ## Usage
 
