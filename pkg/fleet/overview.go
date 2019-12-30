@@ -68,8 +68,8 @@ func nodesOverview(cfg api.Config, context string) (string, error) {
 	nodes, err := cs.CoreV1().Nodes().List(metav1.ListOptions{})
 	nodeCount := len(nodes.Items)
 	readyCount := 0
-	for _, node in nodes.Items {
-		for _, nodeCondition in node.Status.Conditions {
+	for _, node := range nodes.Items {
+		for _, nodeCondition := range node.Status.Conditions {
 			if nodeCondition.Type == "Ready" {
 				if nodeCondition.Status == "True" {
 					readyCount++	
