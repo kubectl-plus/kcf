@@ -66,10 +66,22 @@ func nodesOverview(cfg api.Config, context string) (string, error) {
 		return "", errors.Wrap(err, "Can't create a clientset based on config provided")
 	}
 	nodes, err := cs.CoreV1().Nodes().List(metav1.ListOptions{})
+	nodeCount := len(nodes.Items)
+	readyCount := 0
+	for _, node := range nodes.Items {
+		for _, nodeCondition := range node.Status.Conditions {
+			if nodeCondition.Type == "Ready" {
+				if nodeCondition.Status == "True" {
+					readyCount++	
+				}
+				break	
+			}
+		}
+	}
 	if err != nil {
 		return "", errors.Wrap(err, "Can't get nodes in cluster")
 	}
-	noverview := fmt.Sprintf("%v", len(nodes.Items))
+	noverview := fmt.Sprintf("%v/%v", readyCount, nodeCount)
 	return noverview, nil
 }
 
