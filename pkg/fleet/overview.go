@@ -72,9 +72,9 @@ func nodesOverview(cfg api.Config, context string) (string, error) {
 		for _, nodeCondition := range node.Status.Conditions {
 			if nodeCondition.Type == "Ready" {
 				if nodeCondition.Status == "True" {
-					readyCount++	
+					readyCount++
 				}
-				break	
+				break
 			}
 		}
 	}
