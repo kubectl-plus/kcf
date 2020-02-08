@@ -23,6 +23,10 @@ func Details(configFlags *genericclioptions.ConfigFlags, args []string) error {
 	}
 	clusterID := args[0]
 	cluster := cfg.Clusters[clusterID]
+	if cluster == nil {
+		return errors.New(fmt.Sprintf("cluster %q not found in kubeconfig", clusterID))
+	}
+
 	fmt.Printf("API server endpoint: %v\n", cluster.Server)
 	context := contextOf(cfg, clusterID)
 	coreres, err := coreResDetails(cfg, context)
