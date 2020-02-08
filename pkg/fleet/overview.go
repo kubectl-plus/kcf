@@ -3,6 +3,7 @@ package fleet
 import (
 	"fmt"
 	"os"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/pkg/errors"
@@ -21,7 +22,7 @@ func Overview(configFlags *genericclioptions.ConfigFlags) error {
 		return errors.Wrap(err, "Can't assemble raw config")
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
-	fmt.Fprintln(w, "CLUSTER\tVERSION\tNODES\tNAMESPACES\tAPI")
+	fmt.Fprintln(w, "CLUSTER\tVERSION\tNODES\tNAMESPACES\tPROVIDER\tAPI")
 	for name, context := range cfg.Contexts {
 		cluster := cfg.Clusters[context.Cluster]
 		clusterVersion, err := clusterVersion(cfg, name)
@@ -40,7 +41,9 @@ func Overview(configFlags *genericclioptions.ConfigFlags) error {
 		if cluster != nil {
 			apiServerEndpoint = cluster.Server
 		}
-		fmt.Fprintln(w, fmt.Sprintf("%v\t%v\t%v\t%v\t%v", context.Cluster, clusterVersion, noinfo, nsinfo, apiServerEndpoint))
+		provider := getProvider(cfg, name)
+
+		fmt.Fprintln(w, fmt.Sprintf("%v\t%v\t%v\t%v\t%v\t%v", context.Cluster, clusterVersion, noinfo, nsinfo, provider, apiServerEndpoint))
 	}
 	w.Flush()
 	return nil
@@ -72,9 +75,9 @@ func nodesOverview(cfg api.Config, context string) (string, error) {
 		for _, nodeCondition := range node.Status.Conditions {
 			if nodeCondition.Type == "Ready" {
 				if nodeCondition.Status == "True" {
-					readyCount++	
+					readyCount++
 				}
-				break	
+				break
 			}
 		}
 	}
@@ -97,4 +100,48 @@ func nsOverview(cfg api.Config, context string) (string, error) {
 	}
 	nsverview := fmt.Sprintf("%v", len(ns.Items))
 	return nsverview, nil
+}
+
+func getProvider(cfg api.Config, contextName string) string {
+	context := cfg.Contexts[contextName]
+	if context == nil {
+		return "?"
+	}
+
+	apiServerEndpoint := cfg.Clusters[context.Cluster].Server
+	switch {
+	case strings.HasPrefix(contextName, "kind-"):
+		return "kind"
+	case strings.HasPrefix(apiServerEndpoint, "gke"):
+		return "GKE"
+	case strings.Contains(apiServerEndpoint, "amazon"):
+		return "AWS"
+	case strings.Contains(apiServerEndpoint, "ondigitalocean"):
+		return "Digital Ocean"
+	case strings.Contains(apiServerEndpoint, "azmk8s.io"):
+		return "Microsoft AKS"
+	default:
+		provider, err := getProviderFromNodeMetadata(cfg, contextName)
+		if err != nil {
+			return "?"
+		}
+
+		return provider
+	}
+}
+
+func getProviderFromNodeMetadata(cfg api.Config, context string) (string, error) {
+	cs, err := csForContext(cfg, context)
+	if err != nil {
+		return "", errors.Wrap(err, "Can't create a clientset based on config provided")
+	}
+
+	nodes, err := cs.CoreV1().Nodes().List(metav1.ListOptions{})
+	for _, node := range nodes.Items {
+		if strings.Contains(node.Labels["kubernetes.io/hostname"], "minikube") {
+			return "minikube", nil
+		}
+	}
+
+	return "", fmt.Errorf("failed to identify provider from node metadata")
 }
