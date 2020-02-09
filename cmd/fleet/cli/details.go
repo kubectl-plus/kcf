@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/mhausenblas/kcf/pkg/fleet"
+	"github.com/kubectl-plus/kcf/pkg/fleet"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

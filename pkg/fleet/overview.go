@@ -112,7 +112,7 @@ func getProvider(cfg api.Config, contextName string) string {
 	switch {
 	case strings.HasPrefix(contextName, "kind-"):
 		return "kind"
-	case strings.HasPrefix(apiServerEndpoint, "gke"):
+	case strings.HasPrefix(contextName, "gke"):
 		return "GKE"
 	case strings.Contains(apiServerEndpoint, "amazon"):
 		return "AWS"

@@ -21,7 +21,7 @@ the control plane version or API server endpoint are displayed, as well as selec
 stats, for example, the number of worker nodes or namespaces found in the cluster.
 
 Note that you can also use it standalone, simply download the binary for your platform
-from the [release page](https://github.com/mhausenblas/kcf/releases).
+from the [release page](https://github.com/kubectl-plus/kcf/releases).
 
 ## Getting started
 

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/mhausenblas/kcf/pkg/fleet"
+	"github.com/kubectl-plus/kcf/pkg/fleet"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
