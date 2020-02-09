@@ -1,4 +1,4 @@
-module github.com/mhausenblas/kcf
+module github.com/kubectl-plus/kcf
 
 go 1.12
 

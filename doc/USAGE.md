@@ -12,7 +12,7 @@ $ kubectl krew install fleet
 Alternatively, for a version that is not yet updated and hence available in the [krew index](https://index.krew.dev/), you can install `fleet` from this repo as follows:
 
 ```sh
-$ git clone https://github.com/mhausenblas/kcf.git && cd kcf
+$ git clone https://github.com/kubectl-plus/kcf.git && cd kcf
 
 $ kubectl krew install --manifest=deploy/krew/fleet.yaml
 ```

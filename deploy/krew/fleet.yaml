@@ -9,7 +9,7 @@ spec:
       matchLabels:
         os: linux
         arch: amd64
-    {{addURIAndSha "https://github.com/mhausenblas/kcf/releases/download/{{ .TagName }}/fleet_linux_amd64.tar.gz" .TagName }}
+    {{addURIAndSha "https://github.com/kubectl-plus/kcf/releases/download/{{ .TagName }}/fleet_linux_amd64.tar.gz" .TagName }}
     files:
     - from: "./fleet"
       to: "."
@@ -20,7 +20,7 @@ spec:
       matchLabels:
         os: darwin
         arch: amd64
-    {{addURIAndSha "https://github.com/mhausenblas/kcf/releases/download/{{ .TagName }}/fleet_darwin_amd64.tar.gz" .TagName }}
+    {{addURIAndSha "https://github.com/kubectl-plus/kcf/releases/download/{{ .TagName }}/fleet_darwin_amd64.tar.gz" .TagName }}
     files:
     - from: "./fleet"
       to: "."
@@ -31,7 +31,7 @@ spec:
       matchLabels:
         os: windows
         arch: amd64
-    {{addURIAndSha "https://github.com/mhausenblas/kcf/releases/download/{{ .TagName }}/fleet_windows_amd64.zip" .TagName }}
+    {{addURIAndSha "https://github.com/kubectl-plus/kcf/releases/download/{{ .TagName }}/fleet_windows_amd64.zip" .TagName }}
     files:
     - from: "/fleet.exe"
       to: "."
@@ -39,14 +39,14 @@ spec:
       to: "."
     bin: "fleet.exe"
   shortDescription: Shows config and resources of a fleet of clusters
-  homepage: https://github.com/mhausenblas/kcf
+  homepage: https://github.com/kubectl-plus/kcf
   caveats: |
     Usage:
       $ kubectl fleet
 
     For additional options:
       $ kubectl fleet --help
-      or https://github.com/mhausenblas/kcf/blob/v0.1.4/doc/USAGE.md
+      or https://github.com/kubectl-plus/kcf/blob/v0.1.4/doc/USAGE.md
 
   description: |
     Allows to get an overview and details on a fleet of Kubernetes clusters.
