@@ -9,14 +9,6 @@ In order to be able to do that, make sure you have [krew installed](https://gith
 $ kubectl krew install fleet
 ```
 
-Alternatively, for a version that is not yet updated and hence available in the [krew index](https://index.krew.dev/), you can install `fleet` from this repo as follows:
-
-```sh
-$ git clone https://github.com/kubectl-plus/kcf.git && cd kcf
-
-$ kubectl krew install --manifest=deploy/krew/fleet.yaml
-```
-
 If the installation fails, check if `krew` is available on your local system
  and also, make sure you're using the most recent index (run `kubectl krew update`) to ensure this.
 
@@ -35,9 +27,13 @@ To get an overview of your entire fleet, do:
 
 ```sh
 $ kubectl fleet
-CLUSTER                     VERSION            NODES NAMESPACES API
-mngbase.us-west-2.eksctl.io v1.14.8-eks-41be3d 2     5          https://123456789ABCDEF.gr7.us-west-2.eks.amazonaws.com
-kind-mh9local               v1.16.3            1     4          https://127.0.0.1:58836
+CLUSTER                                                      VERSION       NODES NAMESPACES PROVIDER      API
+kind-kind-3                                                  v1.16.3       1/1   4          kind          https://127.0.0.1:32769
+test-cluster-2                                               v1.16.2       1/1   4          minikube      https://192.168.64.4:8443
+kind-test2                                                   v1.16.3       1/1   4          kind          https://127.0.0.1:32768
+minikube                                                     v1.16.2       1/1   4          minikube      https://192.168.64.3:8443
+gke_krew-release-bot-260708_us-central1-a_standard-cluster-1 v1.15.8-gke.3 3/3   4          GKE           https://104.197.42.183
+do-sfo2-k8s-1-16-6-do-0-sfo2-1581265844177                   v1.16.6       3/3   4          Digital Ocean https://f048f314-4f77-47c2-9264-764da91d35e0.k8s.ondigitalocean.com
 ```
 
 ### Exploring clusters in the fleet
