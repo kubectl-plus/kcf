@@ -1,7 +1,7 @@
 project_name: fleet
 release:
   github:
-    owner: mhausenblas
+    owner: kubectl-plus
     name: kcf
 builds:
   - id: fleet
@@ -19,7 +19,7 @@ builds:
       - GO111MODULE=on
     main: cmd/fleet/main.go
     ldflags: -s -w
-      -X github.com/mhausenblas/kcf/pkg/version.version=
+      -X github.com/kubectl-plus/kcf/pkg/version.version=
 archives:
   - id: fleet
     builds:
