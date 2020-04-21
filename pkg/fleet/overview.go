@@ -120,6 +120,8 @@ func getProvider(cfg api.Config, contextName string) string {
 		return "Digital Ocean"
 	case strings.Contains(apiServerEndpoint, "azmk8s.io"):
 		return "Microsoft AKS"
+	case strings.HasSuffix(apiServerEndpoint, "k8s.ovh.net"):
+		return "OVHcloud"
 	default:
 		provider, err := getProviderFromNodeMetadata(cfg, contextName)
 		if err != nil {
