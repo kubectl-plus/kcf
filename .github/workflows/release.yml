@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
     - name: Create a release
       run: make release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Update new version in krew-index
-      uses: rajatjindal/krew-release-bot@v0.0.36
+      uses: rajatjindal/krew-release-bot@v0.0.46
       with:
         krew_template_file: deploy/krew/fleet.yaml

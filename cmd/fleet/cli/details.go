@@ -15,7 +15,7 @@ func DetailsCmd() *cobra.Command {
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := fleet.Details(KubernetesConfigFlags, args); err != nil {
+			if err := fleet.Details(cmd.Context(), KubernetesConfigFlags, args); err != nil {
 				return errors.Cause(err)
 			}
 			return nil

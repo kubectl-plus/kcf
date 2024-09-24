@@ -1,6 +1,7 @@
 package fleet
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -15,7 +16,7 @@ import (
 // Overview creates an tabular overview of all the clusters in a fleet.
 // A fleet is defined as the active clusters in the kubeconfig provided, that
 // is, what you see when you execute: kubectl config get-contexts
-func Overview(configFlags *genericclioptions.ConfigFlags) error {
+func Overview(ctx context.Context, configFlags *genericclioptions.ConfigFlags) error {
 	clientcfg := configFlags.ToRawKubeConfigLoader()
 	cfg, err := clientcfg.RawConfig()
 	if err != nil {
@@ -29,11 +30,11 @@ func Overview(configFlags *genericclioptions.ConfigFlags) error {
 		if err != nil {
 			clusterVersion = "?"
 		}
-		noinfo, err := nodesOverview(cfg, name)
+		noinfo, err := nodesOverview(ctx, cfg, name)
 		if err != nil {
 			noinfo = "?"
 		}
-		nsinfo, err := nsOverview(cfg, name)
+		nsinfo, err := nsOverview(ctx, cfg, name)
 		if err != nil {
 			nsinfo = "?"
 		}
@@ -41,7 +42,7 @@ func Overview(configFlags *genericclioptions.ConfigFlags) error {
 		if cluster != nil {
 			apiServerEndpoint = cluster.Server
 		}
-		provider := getProvider(cfg, name)
+		provider := getProvider(ctx, cfg, name)
 
 		fmt.Fprintln(w, fmt.Sprintf("%v\t%v\t%v\t%v\t%v\t%v", context.Cluster, clusterVersion, noinfo, nsinfo, provider, apiServerEndpoint))
 	}
@@ -63,12 +64,12 @@ func clusterVersion(cfg api.Config, context string) (string, error) {
 }
 
 // nodesOverview returns the cluster's worker nodes overview in given context
-func nodesOverview(cfg api.Config, context string) (string, error) {
-	cs, err := csForContext(cfg, context)
+func nodesOverview(ctx context.Context, cfg api.Config, contextName string) (string, error) {
+	cs, err := csForContext(cfg, contextName)
 	if err != nil {
 		return "", errors.Wrap(err, "Can't create a clientset based on config provided")
 	}
-	nodes, err := cs.CoreV1().Nodes().List(metav1.ListOptions{})
+	nodes, err := cs.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
 	nodeCount := len(nodes.Items)
 	readyCount := 0
 	for _, node := range nodes.Items {
@@ -89,12 +90,12 @@ func nodesOverview(cfg api.Config, context string) (string, error) {
 }
 
 // nsOverview returns the cluster's namespaces overview in given context
-func nsOverview(cfg api.Config, context string) (string, error) {
-	cs, err := csForContext(cfg, context)
+func nsOverview(ctx context.Context, cfg api.Config, contextName string) (string, error) {
+	cs, err := csForContext(cfg, contextName)
 	if err != nil {
 		return "", errors.Wrap(err, "Can't create a clientset based on config provided")
 	}
-	ns, err := cs.CoreV1().Namespaces().List(metav1.ListOptions{})
+	ns, err := cs.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return "", errors.Wrap(err, "Can't get namespaces in cluster")
 	}
@@ -102,7 +103,7 @@ func nsOverview(cfg api.Config, context string) (string, error) {
 	return nsverview, nil
 }
 
-func getProvider(cfg api.Config, contextName string) string {
+func getProvider(ctx context.Context, cfg api.Config, contextName string) string {
 	context := cfg.Contexts[contextName]
 	if context == nil {
 		return "?"
@@ -123,7 +124,7 @@ func getProvider(cfg api.Config, contextName string) string {
 	case strings.HasSuffix(apiServerEndpoint, "k8s.ovh.net"):
 		return "OVHcloud"
 	default:
-		provider, err := getProviderFromNodeMetadata(cfg, contextName)
+		provider, err := getProviderFromNodeMetadata(ctx, cfg, contextName)
 		if err != nil {
 			return "?"
 		}
@@ -132,13 +133,13 @@ func getProvider(cfg api.Config, contextName string) string {
 	}
 }
 
-func getProviderFromNodeMetadata(cfg api.Config, context string) (string, error) {
-	cs, err := csForContext(cfg, context)
+func getProviderFromNodeMetadata(ctx context.Context, cfg api.Config, contextName string) (string, error) {
+	cs, err := csForContext(cfg, contextName)
 	if err != nil {
 		return "", errors.Wrap(err, "Can't create a clientset based on config provided")
 	}
 
-	nodes, err := cs.CoreV1().Nodes().List(metav1.ListOptions{})
+	nodes, err := cs.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
 	for _, node := range nodes.Items {
 		if strings.Contains(node.Labels["kubernetes.io/hostname"], "minikube") {
 			return "minikube", nil
