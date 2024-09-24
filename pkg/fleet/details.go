@@ -1,6 +1,7 @@
 package fleet
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -12,7 +13,7 @@ import (
 )
 
 // Details creates a detailed report on a particular clusters in a fleet
-func Details(configFlags *genericclioptions.ConfigFlags, args []string) error {
+func Details(ctx context.Context, configFlags *genericclioptions.ConfigFlags, args []string) error {
 	clientcfg := configFlags.ToRawKubeConfigLoader()
 	cfg, err := clientcfg.RawConfig()
 	if err != nil {
@@ -28,8 +29,8 @@ func Details(configFlags *genericclioptions.ConfigFlags, args []string) error {
 	}
 
 	fmt.Printf("API server endpoint: %v\n", cluster.Server)
-	context := contextOf(cfg, clusterID)
-	coreres, err := coreResDetails(cfg, context)
+	contextName := contextOf(cfg, clusterID)
+	coreres, err := coreResDetails(ctx, cfg, contextName)
 	if err != nil {
 		return err
 	}
@@ -39,12 +40,12 @@ func Details(configFlags *genericclioptions.ConfigFlags, args []string) error {
 
 // coreResDetails returns details about useful core resources in given context.
 // Useful core resources include pods, services, deployments,
-func coreResDetails(cfg api.Config, context string) (result string, err error) {
-	cs, err := csForContext(cfg, context)
+func coreResDetails(ctx context.Context, cfg api.Config, contextName string) (result string, err error) {
+	cs, err := csForContext(cfg, contextName)
 	if err != nil {
 		return "", errors.Wrap(err, "Can't create a clientset based on config provided")
 	}
-	namespaces, err := cs.CoreV1().Namespaces().List(metav1.ListOptions{})
+	namespaces, err := cs.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return "", errors.Wrap(err, "Can't get namespaces in cluster")
 	}
@@ -52,7 +53,7 @@ func coreResDetails(cfg api.Config, context string) (result string, err error) {
 		nsname := ns.Name
 		result += fmt.Sprintf("# namespace [%v]\n", nsname)
 		// pod stats in namespace:
-		pods, err := cs.CoreV1().Pods(nsname).List(metav1.ListOptions{})
+		pods, err := cs.CoreV1().Pods(nsname).List(ctx, metav1.ListOptions{})
 		if err != nil {
 			return "", errors.Wrap(err, "Can't get pods")
 		}
@@ -66,7 +67,7 @@ func coreResDetails(cfg api.Config, context string) (result string, err error) {
 			}
 		}
 		// service stats in namespace:
-		svcs, err := cs.CoreV1().Services(nsname).List(metav1.ListOptions{})
+		svcs, err := cs.CoreV1().Services(nsname).List(ctx, metav1.ListOptions{})
 		if err != nil {
 			return "", errors.Wrap(err, "Can't get services")
 		}
